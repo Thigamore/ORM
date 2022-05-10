@@ -12,24 +12,22 @@ import (
 
 //Db Wrapper
 type Db struct {
-	db *sql.DB
+	db     *sql.DB
+	tables []*Table
 }
 
-var dB_CONST *Db
-
-func InitDb(dbName string, conf src.Config) error {
+func InitDb(dbName string, conf src.Config) (*Db, error) {
 	log.Println("Initializing Db")
 	db := &Db{}
 
 	dbSql, err := sql.Open("mysql", conf.Name+":"+conf.Password+"@tcp(127.0.0.1:3306)/"+dbName)
 	if err != nil {
-		return err
+		return nil, err
 	}
-	dB_CONST = db
 
 	db.db = dbSql
 
-	return nil
+	return db, nil
 }
 
 func (db *Db) TableExists(tableName string) (bool, error) {
@@ -48,4 +46,8 @@ func (db *Db) TableExists(tableName string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (db *Db) Insert(tableName string, primaryCols *[]string, cols *[]string, colTypes *[]string, newColValues *[]any) error {
+	dbQuery := "INSERT INTO (?) WHERE"
 }
