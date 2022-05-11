@@ -1,4 +1,4 @@
-package src
+package db
 
 import (
 	"database/sql"
@@ -13,7 +13,7 @@ import (
 //Db Wrapper
 type Db struct {
 	db     *sql.DB
-	tables []*Table
+	tables map[string]*Table
 }
 
 func InitDb(dbName string, conf src.Config) (*Db, error) {
@@ -46,6 +46,28 @@ func (db *Db) TableExists(tableName string) (bool, error) {
 		}
 	}
 	return false, nil
+}
+
+func (db *Db) CreateTable(tbName string)
+
+//Adds a table that is being used to the db
+func (db *Db) AddTable(table *Table) {
+	db.tables[table.Name] = table
+}
+
+//Gets a table that is being used from the db
+func (db *Db) GetTable(tbName string) *Table {
+	tb, exists := db.tables[tbName]
+	if exists {
+		return tb
+	} else {
+		tb = &Table{
+			Name: tbName,
+			db:   db,
+		}
+		db.AddTable(tb)
+		return tb
+	}
 }
 
 func (db *Db) Insert(tableName string, primaryCols *[]string, cols *[]string, colTypes *[]string, newColValues *[]any) error {

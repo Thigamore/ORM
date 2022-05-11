@@ -1,4 +1,4 @@
-package src
+package db
 
 import (
 	"reflect"
@@ -10,8 +10,7 @@ type Table struct {
 }
 
 func InitTable(tableName string, db *Db) *Table {
-	table := &Table{Name: tableName, db: db}
-	return table
+	return db.GetTable(tableName)
 }
 
 //Saves a particular object to a db
